@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator Płacowo-Emerytalny | PWSI</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="/static/css/style.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top" id="mainNav" style="display:none">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold" href="#"><i class="bi bi-calculator"></i> Kalkulator Płacowo-Emerytalny</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navMenu">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item"><a class="nav-link" href="#" data-page="dashboard"><i class="bi bi-house"></i> Panel</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#" data-page="payroll"><i class="bi bi-cash-stack"></i> Wynagrodzenie</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#" data-page="pension"><i class="bi bi-graph-up"></i> Emerytura</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#" data-page="reports"><i class="bi bi-file-earmark-bar-graph"></i> Raporty</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#" data-page="history"><i class="bi bi-clock-history"></i> Historia</a></li>
+                    <li class="nav-item admin-only" style="display:none"><a class="nav-link" href="#" data-page="admin"><i class="bi bi-gear"></i> Administracja</a></li>
+                    <li class="nav-item hr-only" style="display:none"><a class="nav-link" href="#" data-page="parameters"><i class="bi bi-sliders"></i> Parametry</a></li>
+                </ul>
+                <span class="navbar-text me-3" id="userInfo"></span>
+                <button class="btn btn-outline-light btn-sm" id="logoutBtn"><i class="bi bi-box-arrow-right"></i> Wyloguj</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- LOGIN -->
+    <div id="loginPage" class="login-wrapper">
+        <div class="login-card">
+            <div class="text-center mb-4">
+                <i class="bi bi-calculator display-4 text-primary"></i>
+                <h2 class="mt-2">Kalkulator Płacowo-Emerytalny</h2>
+                <p class="text-muted">Projektowanie i wdrażanie systemów informatycznych</p>
+                <p class="text-muted authors">Adam Kępczyński, Julia Szewczyk, Oliwier Gorzałczyński, Mikołaj Mazurek</p>
+            </div>
+            <ul class="nav nav-tabs mb-3" role="tablist">
+                <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#loginTab">Logowanie</button></li>
+                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#registerTab">Rejestracja</button></li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane fade show active" id="loginTab">
+                    <form id="loginForm">
+                        <div class="mb-3">
+                            <label class="form-label">Login</label>
+                            <input type="text" class="form-control form-control-lr" id="loginUsername" required >
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Hasło</label>
+                            <input type="password" class="form-control form-control-lr" id="loginPassword" required >
+                        </div>
+                        <div id="loginError" class="alert alert-danger d-none"></div>
+                        <button type="submit" class="btn btn-primary w-100">Zaloguj się</button>
+                    </form>
+                </div>
+                <div class="tab-pane fade" id="registerTab">
+                    <form id="registerForm">
+                        <div class="mb-3">
+                            <label class="form-label">Login</label>
+                            <input type="text" class="form-control form-control-lr" id="regUsername" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control form-control-lr" id="regEmail" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Hasło (min. 6 znaków)</label>
+                            <input type="password" class="form-control form-control-lr" id="regPassword" required minlength="6">
+                        </div>
+                        <div id="registerError" class="alert alert-danger d-none"></div>
+                        <div id="registerSuccess" class="alert alert-success d-none"></div>
+                        <button type="submit" class="btn btn-success w-100">Zarejestruj się</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- APP PAGES -->
+    <div id="appContent" class="container-fluid py-4" style="display:none">
+
+        <!-- DASHBOARD -->
+        <div class="page" id="page-dashboard">
+            <h3 class="mb-4"><i class="bi bi-house"></i> Panel główny</h3>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="card stat-card h-100" onclick="navigateTo('payroll')">
+                        <div class="card-body text-center">
+                            <i class="bi bi-cash-stack display-4 text-success"></i>
+                            <h5 class="mt-3">Kalkulator wynagrodzeń</h5>
+                            <p class="text-muted">Brutto ↔ Netto, koszty pracodawcy</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card stat-card h-100" onclick="navigateTo('pension')">
+                        <div class="card-body text-center">
+                            <i class="bi bi-graph-up display-4 text-info"></i>
+                            <h5 class="mt-3">Symulacja emerytury</h5>
+                            <p class="text-muted">ZUS, OFE, PPK — prognozy i scenariusze</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card stat-card h-100" onclick="navigateTo('reports')">
+                        <div class="card-body text-center">
+                            <i class="bi bi-file-earmark-bar-graph display-4 text-warning"></i>
+                            <h5 class="mt-3">Raporty i wykresy</h5>
+                            <p class="text-muted">Pasek wynagrodzeń, porównania, PDF</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="alert alert-info mt-4">
+                <i class="bi bi-info-circle"></i>
+                <strong>Wskazówka:</strong> Wszystkie obliczenia wykorzystują aktualne parametry systemowe (stawki ZUS, progi PIT, kwota wolna).
+                Administrator biznesowy może je aktualizować w zakładce Parametry.
+            </div>
+        </div>
+
+        <!-- PAYROLL -->
+        <div class="page d-none" id="page-payroll">
+            <h3 class="mb-4"><i class="bi bi-cash-stack"></i> Kalkulator wynagrodzeń</h3>
+            <div class="row g-4">
+                <div class="col-lg-4">
+                    <div class="card">
+                        <div class="card-header"><strong>Parametry kalkulacji</strong></div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label class="form-label">Tryb obliczeń</label>
+                                <select class="form-select" id="payrollMode">
+                                    <option value="net-from-gross">Brutto → Netto</option>
+                                    <option value="gross-from-net">Netto → Brutto</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Kwota (PLN)</label>
+                                <input type="number" class="form-control" id="payrollAmount" value="8000" min="1" step="100">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Forma zatrudnienia</label>
+                                <select class="form-select" id="payrollContract">
+                                    <option value="uop">Umowa o pracę (UoP)</option>
+                                    <option value="uz">Umowa zlecenie (UZ)</option>
+                                    <option value="uod">Umowa o dzieło (UoD)</option>
+                                </select>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="payrollPpk" checked>
+                                <label class="form-check-label">PPK włączone</label>
+                            </div>
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" id="payrollSickness" checked>
+                                <label class="form-check-label">Składka chorobowa</label>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Dodatki (PLN)</label>
+                                <input type="number" class="form-control" id="payrollAdditions" value="0" min="0">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Potrącenia (PLN)</label>
+                                <input type="number" class="form-control" id="payrollDeductions" value="0" min="0">
+                            </div>
+                            <button class="btn btn-primary w-100" id="calcPayrollBtn"><i class="bi bi-calculator"></i> Oblicz</button>
+                            <button class="btn btn-outline-secondary w-100 mt-2" id="savePayrollBtn"><i class="bi bi-save"></i> Zapisz wariant</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-8">
+                    <div id="payrollError" class="alert alert-danger d-none"></div>
+                    <div id="payrollResults" class="d-none">
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-4"><div class="card result-card"><div class="card-body text-center"><small class="text-muted">Brutto</small><h3 id="resGross" class="text-primary">-</h3></div></div></div>
+                            <div class="col-md-4"><div class="card result-card"><div class="card-body text-center"><small class="text-muted">Netto</small><h3 id="resNet" class="text-success">-</h3></div></div></div>
+                            <div class="col-md-4"><div class="card result-card"><div class="card-body text-center"><small class="text-muted">Koszt pracodawcy</small><h3 id="resEmployer" class="text-danger">-</h3></div></div></div>
+                        </div>
+                        <div class="card mb-4">
+                            <div class="card-header"><strong>Szczegółowy pasek wynagrodzeń</strong></div>
+                            <div class="card-body p-0">
+                                <table class="table table-striped mb-0" id="payrollTable"></table>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header"><strong>Struktura wypłaty</strong></div>
+                            <div class="card-body"><canvas id="payrollChart" height="200"></canvas></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PENSION -->
+        <div class="page d-none" id="page-pension">
+            <h3 class="mb-4"><i class="bi bi-graph-up"></i> Symulacja emerytury</h3>
+            <div class="row g-4">
+                <div class="col-lg-4">
+                    <div class="card">
+                        <div class="card-header"><strong>Parametry symulacji</strong></div>
+                        <div class="card-body">
+                            <div class="row mb-3">
+                                <div class="col-6"><label class="form-label">Wiek</label><input type="number" class="form-control" id="penAge" value="30" min="18" max="80"></div>
+                                <div class="col-6"><label class="form-label">Płeć</label><select class="form-select" id="penGender"><option value="M">M</option><option value="F">K</option></select></div>
+                            </div>
+                            <div class="mb-3"><label class="form-label">Wiek emerytalny</label><input type="number" class="form-control" id="penRetAge" value="67" min="55" max="80"></div>
+                            <div class="mb-3"><label class="form-label">Brutto (PLN/mies.)</label><input type="number" class="form-control" id="penGross" value="8000" min="1"></div>
+                            <div class="mb-3"><label class="form-label">Staż pracy (lata)</label><input type="number" class="form-control" id="penWorkYears" value="5" min="0"></div>
+                            <div class="mb-3"><label class="form-label">Kapitał ZUS (PLN)</label><input type="number" class="form-control" id="penZusCap" value="50000" min="0"></div>
+                            <div class="form-check mb-2"><input class="form-check-input" type="checkbox" id="penOfe"><label class="form-check-label">Członek OFE</label></div>
+                            <div id="ofeFields" class="d-none">
+                                <div class="mb-3"><label class="form-label">Kapitał OFE (PLN)</label><input type="number" class="form-control" id="penOfeCap" value="20000" min="0"></div>
+                                <div class="mb-3"><label class="form-label">Opcja OFE</label><select class="form-select" id="penOfeOpt"><option value="stay">Pozostań w OFE</option><option value="transfer">Przenieś do ZUS</option></select></div>
+                            </div>
+                            <div class="form-check mb-3"><input class="form-check-input" type="checkbox" id="penPpk" checked><label class="form-check-label">PPK włączone</label></div>
+                            <div class="mb-3"><label class="form-label">Wzrost wynagrodzenia (%/rok)</label><input type="number" class="form-control" id="penGrowth" value="5" min="0" max="20" step="0.5"></div>
+                            <div class="mb-3"><label class="form-label">Inflacja (%/rok)</label><input type="number" class="form-control" id="penInflation" value="3" min="0" max="20" step="0.5"></div>
+                            <div class="mb-3"><label class="form-label">Planowane wydatki (PLN/mies.)</label><input type="number" class="form-control" id="penExpenses" value="5000" min="0"></div>
+                            <button class="btn btn-primary w-100" id="calcPensionBtn"><i class="bi bi-graph-up"></i> Oblicz</button>
+                            <button class="btn btn-outline-secondary w-100 mt-2" id="savePensionBtn"><i class="bi bi-save"></i> Zapisz symulację</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-8">
+                    <div id="pensionError" class="alert alert-danger d-none"></div>
+                    <div id="pensionResults" class="d-none">
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-3"><div class="card result-card"><div class="card-body text-center"><small>ZUS</small><h4 id="penResZus">-</h4></div></div></div>
+                            <div class="col-md-3"><div class="card result-card"><div class="card-body text-center"><small>OFE</small><h4 id="penResOfe">-</h4></div></div></div>
+                            <div class="col-md-3"><div class="card result-card"><div class="card-body text-center"><small>PPK</small><h4 id="penResPpk">-</h4></div></div></div>
+                            <div class="col-md-3"><div class="card result-card bg-primary text-white"><div class="card-body text-center"><small>Łącznie</small><h4 id="penResTotal">-</h4></div></div></div>
+                        </div>
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6"><div class="card"><div class="card-body"><small class="text-muted">Pokrycie wydatków</small><div class="progress mt-2" style="height:25px"><div class="progress-bar" id="penCoverage" style="width:0%">0%</div></div></div></div></div>
+                            <div class="col-md-6"><div class="card"><div class="card-body"><small class="text-muted">Emerytura po korekcie inflacji</small><h5 id="penInflAdj" class="mt-1">-</h5></div></div></div>
+                        </div>
+                        <div class="card mb-4">
+                            <div class="card-header"><strong>Scenariusze emerytalne</strong></div>
+                            <div class="card-body" id="penScenarios"></div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header"><strong>Trend przyrostu kapitału</strong></div>
+                            <div class="card-body"><canvas id="pensionChart" height="250"></canvas></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- REPORTS -->
+        <div class="page d-none" id="page-reports">
+            <h3 class="mb-4"><i class="bi bi-file-earmark-bar-graph"></i> Raporty</h3>
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-header"><strong>Porównanie form zatrudnienia</strong></div>
+                        <div class="card-body">
+                            <div class="mb-3"><label class="form-label">Brutto (PLN)</label><input type="number" class="form-control" id="repCompareGross" value="8000"></div>
+                            <button class="btn btn-primary" id="repCompareBtn">Porównaj UoP / UZ / UoD</button>
+                            <div id="compareResults" class="mt-3"></div>
+                            <canvas id="compareChart" class="mt-3" height="200"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-header"><strong>Prognoza roczna dochodów na 10 lat</strong></div>
+                        <div class="card-body">
+                            <div class="mb-3"><label class="form-label">Brutto (PLN)</label><input type="number" class="form-control" id="repAnnualGross" value="8000"></div>
+                            <div class="mb-3"><label class="form-label">Wzrost wynagrodzenia (%/rok)</label><input type="number" class="form-control" id="repAnnualGrowth" value="5"></div>
+                            <button class="btn btn-primary" id="repAnnualBtn">Generuj prognozę</button>
+                            <div id="annualSummary" class="mt-3"></div>
+                            <canvas id="annualChart" class="mt-3" height="200"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card mt-4">
+                <div class="card-header"><strong>Eksport PDF</strong></div>
+                <div class="card-body">
+                    <p class="text-muted">Wygeneruj raport PDF na podstawie ostatniej kalkulacji lub bieżących parametrów.</p>
+                    <button class="btn btn-danger me-2" id="exportPayrollPdf"><i class="bi bi-file-pdf"></i> PDF — Wynagrodzenie</button>
+                    <button class="btn btn-danger" id="exportPensionPdf"><i class="bi bi-file-pdf"></i> PDF — Emerytura</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- HISTORY -->
+        <div class="page d-none" id="page-history">
+            <h3 class="mb-4"><i class="bi bi-clock-history"></i> Historia wariantów</h3>
+            <div class="mb-3">
+                <select class="form-select w-auto d-inline" id="historyFilter">
+                    <option value="">Wszystkie</option>
+                    <option value="payroll">Wynagrodzenia</option>
+                    <option value="pension">Emerytury</option>
+                </select>
+                <button class="btn btn-outline-primary ms-2" id="refreshHistory"><i class="bi bi-arrow-clockwise"></i> Odśwież</button>
+            </div>
+            <div id="historyList" class="row g-3"></div>
+        </div>
+
+        <!-- ADMIN -->
+        <div class="page d-none" id="page-admin">
+            <h3 class="mb-4"><i class="bi bi-gear"></i> Administracja techniczna</h3>
+            <div class="card">
+                <div class="card-header"><strong>Zarządzanie kontami</strong></div>
+                <div class="card-body"><div id="adminUsersTable"></div></div>
+            </div>
+            <div class="card mt-4">
+                <div class="card-header"><strong>Dziennik zdarzeń (audyt)</strong></div>
+                <div class="card-body"><div id="auditLogTable"></div></div>
+            </div>
+        </div>
+
+        <!-- PARAMETERS -->
+        <div class="page d-none" id="page-parameters">
+            <h3 class="mb-4"><i class="bi bi-sliders"></i> Zarządzanie parametrami prawnymi</h3>
+            <div class="alert alert-warning"><i class="bi bi-exclamation-triangle"></i> Zmiany parametrów wpływają na wszystkie przyszłe kalkulacje. Każda zmiana jest rejestrowana w dzienniku audytowym.</div>
+            <div id="parametersTable"></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script src="/static/js/app.js"></script>
+</body>
+</html>

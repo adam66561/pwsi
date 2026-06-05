@@ -1,0 +1,82 @@
+:root {
+    --primary: #1e3a5f;
+    --accent: #2e86ab;
+}
+
+body {
+    background: #f0f4f8;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+.login-wrapper {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+}
+
+.login-card {
+    background: white;
+    border-radius: 16px;
+    padding: 2.5rem;
+    width: 100%;
+    max-width: 25vw;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+}
+
+.navbar-dark.bg-primary {
+    background: var(--primary) !important;
+}
+
+.stat-card {
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    border: none;
+    border-radius: 12px;
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+}
+
+.result-card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.card-header {
+    background: white;
+    border-bottom: 1px solid #e9ecef;
+    font-weight: 600;
+}
+
+.history-item {
+    border-left: 4px solid var(--accent);
+}
+
+.table th {
+    font-weight: 600;
+    color: var(--primary);
+}
+
+.badge-role {
+    font-size: 0.75rem;
+}
+
+.authors {
+    font-size: 0.7rem;
+    color: #6c757d;
+}
+
+.form-control-lr {
+    border: 0.1px solid var(--accent);
+}
